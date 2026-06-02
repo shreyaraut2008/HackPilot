@@ -65,8 +65,8 @@ export async function generateHackathonPlan(
 
   const openai = new OpenAI({ apiKey });
 
-  const systemPrompt = `You are HackForge AI, an elite AI Hackathon Co-Pilot and System Architect. Your job is to analyze a hackathon problem statement and generate a comprehensive, premium, execution-ready roadmap to build a winning project.
-Output a valid JSON object matching the following structure:
+  const systemPrompt = `You are HackPilot AI, an elite AI Hackathon Co-Pilot and System Architect. Your job is to analyze a hackathon problem statement and generate a comprehensive, premium, execution-ready roadmap to build a winning project.
+Output a valid JSON object matching the following structure:`
 {
   "ideas": [
     {
