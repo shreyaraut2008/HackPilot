@@ -58,7 +58,7 @@ export function PitchDeckPanel({ pitchDeck, selectedIdeaName }: PitchDeckPanelPr
           <div className="flex items-center justify-between z-10">
             <div className="flex items-center space-x-2 font-mono text-[9px] text-cyan-400">
               <span className="w-2 h-2 rounded-full bg-cyan-400 animate-pulse" />
-              <span>HACKFORGE DECK ENGINE // SLIDE {slide.slideNum} OF {totalSlides}</span>
+              <span>HACKPILOT AI DECK ENGINE // SLIDE {slide.slideNum} OF {totalSlides}</span>
             </div>
             <span className="text-[10px] font-mono text-slate-500">
               {selectedIdeaName.toUpperCase()} MVP

@@ -120,7 +120,7 @@ export default function Home() {
               <Sparkles className="w-4 h-4 text-white" />
             </div>
             <span className="font-extrabold text-sm tracking-widest text-slate-100 font-mono">
-              HACKFORGE // AI
+              HACKPILOT AI // AI
             </span>
           </div>
 
@@ -161,15 +161,15 @@ export default function Home() {
 
               {/* Title heading with text gradients */}
               <h1 className="text-4xl md:text-7xl font-extrabold leading-[1.08] text-white tracking-tight text-glow-indigo">
-                Forge the Winning
+                Build, Ship, Pitch, and Win
                 <span className="block bg-gradient-to-r from-cyan-400 via-purple-400 to-indigo-500 bg-clip-text text-transparent mt-1 pb-1">
-                  Blueprint.
+                  Hackathons.
                 </span>
               </h1>
 
               {/* Description */}
               <p className="max-w-2xl mx-auto text-sm md:text-lg text-slate-400 leading-relaxed">
-                Paste your hackathon challenge statement. HackForge AI instantly engineers optimal project proposals, robust tech stacks, detailed visual architectures, 36-hour Gantt timelines, priority matrices, presentation slide outline decks, and customized team splits.
+                Paste your hackathon challenge statement. HackPilot AI instantly engineers optimal project proposals, robust tech stacks, detailed visual architectures, 36-hour Gantt timelines, priority matrices, presentation slide outline decks, and customized team splits.
               </p>
 
               {/* Problem Statement input box */}

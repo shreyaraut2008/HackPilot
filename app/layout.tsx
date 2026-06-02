@@ -15,7 +15,7 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "HackForge AI // AI Hackathon Co-Pilot & MVP Architect",
+  title: "HackPilot AI // AI Hackathon Co-Pilot & MVP Architect",
   description: "Transform hackathon problem statements into winning ideas, system architectures, interactive timelines, priority matrices, and high-impact pitch decks in seconds.",
 };
 

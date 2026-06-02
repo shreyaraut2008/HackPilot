@@ -33,7 +33,7 @@ const EXAMPLES = [
 ];
 
 const LOADING_LOGS = [
-  "Initializing HackForge AI Agent cluster...",
+  "Initializing HackPilot AI Agent cluster...",
   "Parsing problem statement semantic layers...",
   "Executing Scope-3 capability analysis...",
   "Consulting judge criteria templates (Feasibility, Impact, Novelty)...",
@@ -55,7 +55,7 @@ export function ProblemInput({ onSubmit, isLoading }: ProblemInputProps) {
 
   // Load API Key from localStorage on mount
   useEffect(() => {
-    const savedKey = localStorage.getItem("hackforge_openai_key");
+    const savedKey = localStorage.getItem("hackpilot_openai_key");
     if (savedKey) {
       setApiKey(savedKey);
     }
@@ -63,7 +63,7 @@ export function ProblemInput({ onSubmit, isLoading }: ProblemInputProps) {
 
   // Save API Key to localStorage
   const handleSaveKey = () => {
-    localStorage.setItem("hackforge_openai_key", apiKey);
+    localStorage.setItem("hackpilot_openai_key", apiKey);
     setShowSettings(false);
   };
 
@@ -110,7 +110,7 @@ export function ProblemInput({ onSubmit, isLoading }: ProblemInputProps) {
             <div className="h-4 w-[1px] bg-white/15" />
             <div className="flex items-center space-x-1.5 text-xs font-mono text-slate-400">
               <Terminal className="w-3.5 h-3.5 text-cyan-400" />
-              <span>hackforge-agent-cluster-v1.0.sh</span>
+              <span>hackpilot-agent-cluster-v1.0.sh</span>
             </div>
           </div>
 
@@ -140,7 +140,7 @@ export function ProblemInput({ onSubmit, isLoading }: ProblemInputProps) {
                   <span>CUSTOM OPENAI API KEY (OPTIONAL)</span>
                 </div>
                 <p className="text-xs text-slate-400">
-                  By default, HackForge runs on a simulated engine with built-in templates so you can demo instantly. Provide your key below to call GPT-4o-mini directly for your custom problem statements. Stored locally in your browser.
+                  By default, HackPilot AI runs on a simulated engine with built-in templates so you can demo instantly. Provide your key below to call GPT-4o-mini directly for your custom problem statements. Stored locally in your browser.
                 </p>
                 <div className="flex items-center space-x-3">
                   <div className="relative flex-1">
