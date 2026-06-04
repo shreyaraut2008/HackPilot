@@ -66,7 +66,7 @@ export async function generateHackathonPlan(
   const openai = new OpenAI({ apiKey });
 
   const systemPrompt = `You are HackPilot AI, an elite AI Hackathon Co-Pilot and System Architect. Your job is to analyze a hackathon problem statement and generate a comprehensive, premium, execution-ready roadmap to build a winning project.
-Output a valid JSON object matching the following structure:`
+Output a valid JSON object matching the following structure:
 {
   "ideas": [
     {
@@ -76,7 +76,7 @@ Output a valid JSON object matching the following structure:`
       "innovationScore": 95,
       "feasibilityScore": 85,
       "impactScore": 90,
-      "difficulty": "Easy" | "Medium" | "Hard",
+      "difficulty": "Easy",
       "badges": ["AI-Driven", "Web3", "Serverless"],
       "secretSauce": "What makes this design win the hackathon judges' hearts."
     }
