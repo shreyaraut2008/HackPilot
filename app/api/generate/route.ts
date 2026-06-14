@@ -4,7 +4,7 @@ import { getMockPlan } from "@/lib/mockGenerator";
 
 export async function POST(req: NextRequest) {
   try {
-    const { problemStatement, apiKey } = await req.json();
+    const { problemStatement, apiKey, smartQuestions } = await req.json();
 
     if (!problemStatement || typeof problemStatement !== "string" || !problemStatement.trim()) {
       return NextResponse.json(
@@ -19,7 +19,7 @@ export async function POST(req: NextRequest) {
     if (effectiveKey) {
       // Use official OpenAI generation
       try {
-        const plan = await generateHackathonPlan(problemStatement, effectiveKey);
+        const plan = await generateHackathonPlan(problemStatement, effectiveKey, smartQuestions);
         return NextResponse.json(plan);
       } catch (err: any) {
         console.error("OpenAI generation failed, falling back to simulator:", err);

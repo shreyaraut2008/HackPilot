@@ -2,10 +2,10 @@
 
 import React, { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { Terminal, Settings, Play, Sparkles, Key, Check, Info } from "lucide-react";
+import { Terminal, Settings, Play, Sparkles, Key, Check, Info, Users, Clock, Code, Cpu, Palette } from "lucide-react";
 
 interface ProblemInputProps {
-  onSubmit: (problemStatement: string, apiKey: string) => void;
+  onSubmit: (problemStatement: string, apiKey: string, smartQuestions: any) => void;
   isLoading: boolean;
 }
 
@@ -53,6 +53,14 @@ export function ProblemInput({ onSubmit, isLoading }: ProblemInputProps) {
   const [apiKey, setApiKey] = useState("");
   const [logIndex, setLogIndex] = useState(0);
 
+  // Smart Questions State
+  const [teamSize, setTeamSize] = useState("3-4");
+  const [experienceLevel, setExperienceLevel] = useState("Intermediate");
+  const [hackathonDuration, setHackathonDuration] = useState("36 Hours");
+  const [preferredStack, setPreferredStack] = useState("React/Next.js");
+  const [aiExperience, setAiExperience] = useState("Used APIs");
+  const [designExperience, setDesignExperience] = useState("Can use Tailwind");
+
   // Load API Key from localStorage on mount
   useEffect(() => {
     const savedKey = localStorage.getItem("hackpilot_openai_key");
@@ -84,7 +92,14 @@ export function ProblemInput({ onSubmit, isLoading }: ProblemInputProps) {
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     if (!problemText.trim()) return;
-    onSubmit(problemText, apiKey);
+    onSubmit(problemText, apiKey, {
+      teamSize,
+      experienceLevel,
+      hackathonDuration,
+      preferredStack,
+      aiExperience,
+      designExperience
+    });
   };
 
   return (
@@ -178,9 +193,109 @@ export function ProblemInput({ onSubmit, isLoading }: ProblemInputProps) {
                 rows={4}
                 className="w-full bg-black/20 border border-white/5 rounded-xl px-5 py-4 text-sm text-slate-200 font-sans focus:border-indigo-500/30 transition duration-300 placeholder-slate-500 scrollbar-custom resize-none"
               />
-              <div className="absolute bottom-4 right-4 flex items-center space-x-2 pointer-events-none">
-                <span className="text-[10px] font-mono text-slate-500">Ctrl + Enter to Execute</span>
+            </div>
+
+            {/* Smart Questions Configuration Grid */}
+            <div className="grid grid-cols-2 md:grid-cols-3 gap-4 bg-white/5 p-4 rounded-xl border border-white/5">
+              
+              <div className="space-y-1.5">
+                <label className="text-[10px] font-mono text-slate-400 flex items-center space-x-1.5">
+                  <Users className="w-3 h-3 text-cyan-500" />
+                  <span>Team Size</span>
+                </label>
+                <select
+                  value={teamSize}
+                  onChange={(e) => setTeamSize(e.target.value)}
+                  className="w-full bg-black/40 border border-white/10 rounded-lg px-3 py-2 text-xs text-slate-200 focus:outline-none focus:border-cyan-500/50 appearance-none"
+                >
+                  <option>1-2</option>
+                  <option>3-4</option>
+                  <option>5+</option>
+                </select>
               </div>
+
+              <div className="space-y-1.5">
+                <label className="text-[10px] font-mono text-slate-400 flex items-center space-x-1.5">
+                  <Info className="w-3 h-3 text-purple-500" />
+                  <span>Experience</span>
+                </label>
+                <select
+                  value={experienceLevel}
+                  onChange={(e) => setExperienceLevel(e.target.value)}
+                  className="w-full bg-black/40 border border-white/10 rounded-lg px-3 py-2 text-xs text-slate-200 focus:outline-none focus:border-purple-500/50 appearance-none"
+                >
+                  <option>Beginners</option>
+                  <option>Intermediate</option>
+                  <option>Advanced</option>
+                </select>
+              </div>
+
+              <div className="space-y-1.5">
+                <label className="text-[10px] font-mono text-slate-400 flex items-center space-x-1.5">
+                  <Clock className="w-3 h-3 text-emerald-500" />
+                  <span>Duration</span>
+                </label>
+                <select
+                  value={hackathonDuration}
+                  onChange={(e) => setHackathonDuration(e.target.value)}
+                  className="w-full bg-black/40 border border-white/10 rounded-lg px-3 py-2 text-xs text-slate-200 focus:outline-none focus:border-emerald-500/50 appearance-none"
+                >
+                  <option>24 Hours</option>
+                  <option>36 Hours</option>
+                  <option>48 Hours</option>
+                  <option>1 Week+</option>
+                </select>
+              </div>
+
+              <div className="space-y-1.5">
+                <label className="text-[10px] font-mono text-slate-400 flex items-center space-x-1.5">
+                  <Code className="w-3 h-3 text-indigo-500" />
+                  <span>Preferred Stack</span>
+                </label>
+                <select
+                  value={preferredStack}
+                  onChange={(e) => setPreferredStack(e.target.value)}
+                  className="w-full bg-black/40 border border-white/10 rounded-lg px-3 py-2 text-xs text-slate-200 focus:outline-none focus:border-indigo-500/50 appearance-none"
+                >
+                  <option>React/Next.js</option>
+                  <option>Vue/Nuxt</option>
+                  <option>Python/Django</option>
+                  <option>No Preference</option>
+                </select>
+              </div>
+
+              <div className="space-y-1.5">
+                <label className="text-[10px] font-mono text-slate-400 flex items-center space-x-1.5">
+                  <Cpu className="w-3 h-3 text-amber-500" />
+                  <span>AI Experience</span>
+                </label>
+                <select
+                  value={aiExperience}
+                  onChange={(e) => setAiExperience(e.target.value)}
+                  className="w-full bg-black/40 border border-white/10 rounded-lg px-3 py-2 text-xs text-slate-200 focus:outline-none focus:border-amber-500/50 appearance-none"
+                >
+                  <option>None</option>
+                  <option>Used APIs</option>
+                  <option>Built Models</option>
+                </select>
+              </div>
+
+              <div className="space-y-1.5">
+                <label className="text-[10px] font-mono text-slate-400 flex items-center space-x-1.5">
+                  <Palette className="w-3 h-3 text-rose-500" />
+                  <span>Design Skill</span>
+                </label>
+                <select
+                  value={designExperience}
+                  onChange={(e) => setDesignExperience(e.target.value)}
+                  className="w-full bg-black/40 border border-white/10 rounded-lg px-3 py-2 text-xs text-slate-200 focus:outline-none focus:border-rose-500/50 appearance-none"
+                >
+                  <option>None</option>
+                  <option>Can use Tailwind</option>
+                  <option>UI/UX Designer</option>
+                </select>
+              </div>
+
             </div>
 
             {/* Ingestion Console Details (Cyclic logs) */}
@@ -194,7 +309,7 @@ export function ProblemInput({ onSubmit, isLoading }: ProblemInputProps) {
                 >
                   <div className="flex items-center space-x-2 mb-2 pb-2 border-b border-white/5">
                     <span className="w-1.5 h-1.5 rounded-full bg-cyan-400 animate-ping" />
-                    <span className="text-slate-400 font-bold uppercase tracking-wider">CO-PILOT EXECUTION IN PROGRESS</span>
+                    <span className="text-slate-400 font-bold uppercase tracking-wider">MISSION CONTROL SYNTHESIS IN PROGRESS</span>
                   </div>
                   <div className="space-y-1 scrollbar-custom max-h-[120px] overflow-y-auto">
                     {LOADING_LOGS.slice(0, logIndex + 1).map((log, idx) => (
@@ -219,7 +334,7 @@ export function ProblemInput({ onSubmit, isLoading }: ProblemInputProps) {
             <div className="flex flex-col sm:flex-row items-center justify-between gap-4">
               <div className="flex items-center space-x-2 text-xs text-slate-400">
                 <Info className="w-3.5 h-3.5 text-indigo-400" />
-                <span>Supports multi-modal problem statements and prompts.</span>
+                <span>Strategy is customized based on your team context.</span>
               </div>
 
               {/* Generate CTA Button with Glow/Animations */}
@@ -237,12 +352,12 @@ export function ProblemInput({ onSubmit, isLoading }: ProblemInputProps) {
                 {isLoading ? (
                   <>
                     <span className="w-3.5 h-3.5 border-2 border-white border-t-transparent rounded-full animate-spin mr-1" />
-                    <span>Synthesizing Bundle...</span>
+                    <span>Synthesizing Strategy...</span>
                   </>
                 ) : (
                   <>
                     <Sparkles className="w-3.5 h-3.5 group-hover:rotate-12 transition-transform duration-300" />
-                    <span>Forge Co-Pilot Bundle</span>
+                    <span>Forge Mission Control OS</span>
                     <Play className="w-3 h-3 text-white/70 group-hover:translate-x-0.5 transition-transform duration-200" />
                   </>
                 )}

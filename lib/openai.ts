@@ -1,17 +1,91 @@
 import OpenAI from "openai";
 
 export interface HackathonPlan {
+  challengeIntelligence: {
+    mostTeamsWillBuild: string;
+    commonSolutions: string[];
+    overusedIdeas: string[];
+    predictableApproaches: string[];
+    underservedOpportunities: string[];
+    unexpectedAngles: string[];
+    judgeAttentionMagnets: string[];
+    uniqueDifferentiators: string[];
+  };
   ideas: Array<{
     name: string;
     tagline: string;
     description: string;
-    innovationScore: number;
-    feasibilityScore: number;
-    impactScore: number;
-    difficulty: "Easy" | "Medium" | "Hard";
     badges: string[];
+    difficulty: "Easy" | "Medium" | "Hard";
     secretSauce: string;
   }>;
+  recommendedWinner: {
+    ideaName: string;
+    confidence: number;
+    why: string[];
+    innovationScore: number;
+    feasibilityScore: number;
+    demoScore: number;
+    impactScore: number;
+    technicalComplexity: number;
+    judgeAppeal: number;
+  };
+  judgeSimulator: {
+    innovation: string;
+    feasibility: string;
+    technicalDepth: string;
+    businessImpact: string;
+    scalability: string;
+    demoPotential: string;
+    presentationStrength: string;
+    selectionProbability: number;
+    biggestWeaknesses: string[];
+    whyYouMightLose: string;
+    whyAnotherTeamCouldBeatYou: string;
+    whatToImproveBeforeSubmission: string;
+  };
+  failureRisk: {
+    topReasons: string[];
+    mitigationPlan: string;
+  };
+  scopeGuardrail: {
+    buildNow: string[];
+    buildIfTimeRemains: string[];
+    buildAfterHackathon: string[];
+    doNotBuild: string[];
+  };
+  winningProbability: {
+    score: number;
+    explanation: string;
+    metrics: {
+      innovation: number;
+      feasibility: number;
+      executionRisk: number;
+      teamSize: number;
+      timeConstraints: number;
+      demoStrength: number;
+      pitchReadiness: number;
+    };
+  };
+  submissionReadiness: {
+    percentage: number;
+    checklist: Array<{ item: string; status: "ready" | "pending" }>;
+  };
+  devStarterKit: {
+    folderStructure: string[];
+    databaseSchema: string;
+    apiDesign: string[];
+    componentTree: string[];
+    implementationOrder: string[];
+    deploymentPlan: string;
+  };
+  pastWinnerInsights: {
+    whatSuccessfulTeamsUsuallyDo: string[];
+    whatWinningProjectsHaveInCommon: string[];
+    mostCommonMistakes: string[];
+    judgesUsuallyReward: string[];
+    judgesUsuallyIgnore: string[];
+  };
   techStack: {
     frontend: { name: string; reasoning: string; alternatives: string[] };
     backend: { name: string; reasoning: string; alternatives: string[] };
@@ -33,8 +107,8 @@ export interface HackathonPlan {
   matrix: Array<{
     feature: string;
     description: string;
-    impact: number; // 0-100
-    effort: number; // 0-100
+    impact: number;
+    effort: number;
     quadrant: "Must Have" | "Should Have" | "Nice to Have" | "Won't Have";
   }>;
   pitchDeck: {
@@ -53,9 +127,19 @@ export interface HackathonPlan {
   };
 }
 
+export interface SmartQuestions {
+  teamSize?: string;
+  experienceLevel?: string;
+  hackathonDuration?: string;
+  preferredStack?: string;
+  aiExperience?: string;
+  designExperience?: string;
+}
+
 export async function generateHackathonPlan(
   problemStatement: string,
-  apiKeyOverride?: string
+  apiKeyOverride?: string,
+  smartQuestions?: SmartQuestions
 ): Promise<HackathonPlan> {
   const apiKey = apiKeyOverride || process.env.OPENAI_API_KEY;
 
@@ -65,103 +149,29 @@ export async function generateHackathonPlan(
 
   const openai = new OpenAI({ apiKey });
 
-  const systemPrompt = `You are HackPilot AI, an elite AI Hackathon Co-Pilot and System Architect. Your job is to analyze a hackathon problem statement and generate a comprehensive, premium, execution-ready roadmap to build a winning project.
-Output a valid JSON object matching the following structure:
-{
-  "ideas": [
-    {
-      "name": "Project Name",
-      "tagline": "Short compelling hook",
-      "description": "Comprehensive explanation of how it solves the problem statement uniquely.",
-      "innovationScore": 95,
-      "feasibilityScore": 85,
-      "impactScore": 90,
-      "difficulty": "Easy",
-      "badges": ["AI-Driven", "Web3", "Serverless"],
-      "secretSauce": "What makes this design win the hackathon judges' hearts."
-    }
-  ],
-  "techStack": {
-    "frontend": { "name": "Next.js 16 + React 19", "reasoning": "...", "alternatives": ["Vite", "Remix"] },
-    "backend": { "name": "Next.js Server Actions / Node.js", "reasoning": "...", "alternatives": ["Express", "Fastify"] },
-    "database": { "name": "MongoDB / Supabase Postgres", "reasoning": "...", "alternatives": ["Redis", "Prisma SQLite"] },
-    "ai_ml": { "name": "OpenAI API / LangChain / HuggingFace", "reasoning": "...", "alternatives": ["Claude SDK", "Gemini API"] },
-    "infra": { "name": "Vercel / AWS", "reasoning": "...", "alternatives": ["Netlify", "Railway"] }
-  },
-  "architecture": {
-    "description": "Architectural strategy overview",
-    "nodes": [
-      { "id": "1", "label": "Client UI (Next.js)", "type": "frontend", "x": 100, "y": 150 },
-      { "id": "2", "label": "API Gateway / Serverless Functions", "type": "api", "x": 300, "y": 150 },
-      { "id": "3", "label": "LLM Orchestration Layer", "type": "service", "x": 500, "y": 80 },
-      { "id": "4", "label": "Vector Database (Pinecone)", "type": "database", "x": 700, "y": 80 },
-      { "id": "5", "label": "Relational DB (Postgres)", "type": "database", "x": 500, "y": 220 }
-    ],
-    "edges": [
-      { "source": "1", "target": "2", "label": "HTTPS Request" },
-      { "source": "2", "target": "3", "label": "gRPC / REST" },
-      { "source": "3", "target": "4", "label": "Embeddings Search" },
-      { "source": "2", "target": "5", "label": "CRUD Operations" }
-    ]
-  },
-  "roadmap": [
-    {
-      "phase": "Phase 1: Ingestion & Environment (Hours 0-6)",
-      "milestone": "Setup & Scaffolding",
-      "tasks": [
-        "Initialize Next.js app with Tailwind and Framer Motion",
-        "Configure OpenAI / database client wrappers",
-        "Set up local mocks for API route testing"
-      ],
-      "status": "completed"
-    }
-  ],
-  "matrix": [
-    {
-      "feature": "Core AI Agent Logic",
-      "description": "Integrates LLM models with problem prompts",
-      "impact": 95,
-      "effort": 40,
-      "quadrant": "Must Have"
-    }
-  ],
-  "pitchDeck": {
-    "slides": [
-      {
-        "slideNum": 1,
-        "title": "Title Slide",
-        "subtitle": "Connecting Vision to Code",
-        "points": ["Introducing [Idea Name]", "A premium solution targeting [Problem]"],
-        "notes": "Intro hook: Start with a relatable story about the problem domain."
-      }
-    ]
-  },
-  "teamSplit": {
-    "frontend": {
-      "role": "Frontend Developer",
-      "focus": "Polishing UI/UX and dynamic client flow",
-      "tasks": ["Implement responsive landing", "Set up Framer Motion wrappers", "Integrate state-management dashboards"]
-    },
-    "backend": {
-      "role": "Backend / AI Engineer",
-      "focus": "API Routes, databases, LLM logic",
-      "tasks": ["Set up vector DB indexes", "Create API endpoints", "Integrate OpenAI system prompts"]
-    },
-    "pitcher": {
-      "role": "Product Manager / Pitcher",
-      "focus": "Slide decks, video demo, copy editing",
-      "tasks": ["Refine slide deck copy", "Record 2-minute project walkthrough", "Write project README.md and submissions"]
-    }
-  }
-}
-Generate exactly 3 winning Ideas, a complete Tech Stack, at least 5 Architecture Nodes and 4 connection Edges (with appropriate standard coordinate layouts x: 50-800, y: 50-350 for visualization), a 4-Phase Roadmap, at least 6 features in the Priority Matrix, a 5-Slide Pitch Deck, and tasks for 3 roles. Make the outputs extremely innovative, creative, and highly specific to the given problem statement. 
-You MUST return ONLY the JSON object. Do not output any backticks or markdown formatting.`;
+  const contextStr = smartQuestions
+    ? `\nContext for the team:\nTeam Size: ${smartQuestions.teamSize || "Unknown"}\nExperience Level: ${smartQuestions.experienceLevel || "Unknown"}\nDuration: ${smartQuestions.hackathonDuration || "Unknown"}\nPreferred Stack: ${smartQuestions.preferredStack || "Unknown"}\nAI Experience: ${smartQuestions.aiExperience || "Unknown"}\nDesign Experience: ${smartQuestions.designExperience || "Unknown"}\n`
+    : "";
+
+  const systemPrompt = `You are HackPilot AI, an elite Hackathon Strategy Operating System. You are not a generic AI text generator. You act as an experienced hackathon mentor, strict judge, startup strategist, and technical lead.
+Your job is to read a hackathon problem statement and output a specific, highly opinionated, strategic, and actionable blueprint to maximize the team's chance of winning.
+Do NOT just generate generic ideas. Make recommendations. Tell them what to avoid. Be brutally honest.
+Output a valid JSON object matching the requested schema. Ensure all fields are populated.
+The output MUST be a JSON object with the keys matching the HackathonPlan interface.
+For "challengeIntelligence", expose what most teams will build (avoid) and what underserved opportunities exist.
+For "recommendedWinner", pick the BEST idea out of your 3 ideas and explain why, giving it high confidence.
+For "judgeSimulator", be extremely critical and honest about why they might lose.
+For "scopeGuardrail", force them to drop scope. Prevent overengineering.
+For "winningProbability", calculate a real score based on constraints.
+For "devStarterKit", give them tangible files and schema to start coding.
+For "pastWinnerInsights", provide insider knowledge.
+Return ONLY the JSON object. Do not output markdown code blocks.`;
 
   const response = await openai.chat.completions.create({
     model: "gpt-4o-mini", // Cost-effective, fast, and highly capable
     messages: [
       { role: "system", content: systemPrompt },
-      { role: "user", content: `Problem Statement: "${problemStatement}"` },
+      { role: "user", content: `Problem Statement: "${problemStatement}"${contextStr}\nGenerate the complete HackathonPlan JSON.` },
     ],
     response_format: { type: "json_object" },
     temperature: 0.7,

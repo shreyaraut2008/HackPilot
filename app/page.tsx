@@ -4,7 +4,6 @@ import React, { useState, useRef } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { GlowGrid } from "@/components/ui/GlowGrid";
 import { ProblemInput } from "@/components/dashboard/ProblemInput";
-import { IdeasPanel } from "@/components/dashboard/IdeasPanel";
 import { TechStackPanel } from "@/components/dashboard/TechStackPanel";
 import { ArchitecturePanel } from "@/components/dashboard/ArchitecturePanel";
 import { RoadmapPanel } from "@/components/dashboard/RoadmapPanel";
@@ -13,24 +12,29 @@ import { PitchDeckPanel } from "@/components/dashboard/PitchDeckPanel";
 import { TaskSplitterPanel } from "@/components/dashboard/TaskSplitterPanel";
 import { ExportPanel } from "@/components/dashboard/ExportPanel";
 
+// New Panels
+import { ProblemDecoderPanel } from "@/components/dashboard/ProblemDecoderPanel";
+import { WinnerRecommendationPanel } from "@/components/dashboard/WinnerRecommendationPanel";
+import { JudgeSimulatorPanel } from "@/components/dashboard/JudgeSimulatorPanel";
+import { ScopeGuardrailPanel } from "@/components/dashboard/ScopeGuardrailPanel";
+import { SubmissionReadinessPanel } from "@/components/dashboard/SubmissionReadinessPanel";
+
 import {
   Sparkles,
   RefreshCw,
-  Cpu,
   Trophy,
-  GitBranch,
   Calendar,
-  Grid as GridIcon,
   Presentation,
-  Users,
   Terminal as TerminalIcon,
-  Lightbulb,
-  ArrowRight,
-  Layers
+  BrainCircuit,
+  Gavel,
+  ShieldAlert,
+  Rocket,
+  Send
 } from "lucide-react";
 import { HackathonPlan } from "@/lib/openai";
 
-type TabKey = "ideas" | "stack" | "arch" | "roadmap" | "matrix" | "pitch" | "tasks" | "export";
+type TabKey = "decoder" | "winner" | "judge" | "sprint" | "scope" | "mission" | "pitch" | "readiness" | "export";
 
 interface TabMeta {
   key: TabKey;
@@ -40,26 +44,26 @@ interface TabMeta {
 }
 
 const TABS: TabMeta[] = [
-  { key: "ideas", label: "Ideas", icon: Lightbulb, glowColor: "from-indigo-500/20 to-transparent" },
-  { key: "stack", label: "Tech Stack", icon: Layers, glowColor: "from-purple-500/20 to-transparent" },
-  { key: "arch", label: "Architecture", icon: GitBranch, glowColor: "from-cyan-500/20 to-transparent" },
-  { key: "roadmap", label: "Roadmap", icon: Calendar, glowColor: "from-blue-500/20 to-transparent" },
-  { key: "matrix", label: "Priority Matrix", icon: GridIcon, glowColor: "from-emerald-500/20 to-transparent" },
-  { key: "pitch", label: "Pitch Deck", icon: Presentation, glowColor: "from-rose-500/20 to-transparent" },
-  { key: "tasks", label: "Team Splitter", icon: Users, glowColor: "from-amber-500/20 to-transparent" },
-  { key: "export", label: "Export Hub", icon: TerminalIcon, glowColor: "from-slate-500/20 to-transparent" }
+  { key: "decoder", label: "Problem Decoder", icon: BrainCircuit, glowColor: "from-indigo-500/20 to-transparent" },
+  { key: "winner", label: "Winner Recommendation", icon: Trophy, glowColor: "from-amber-500/20 to-transparent" },
+  { key: "judge", label: "Judge Simulator", icon: Gavel, glowColor: "from-rose-500/20 to-transparent" },
+  { key: "sprint", label: "Sprint Blueprint", icon: Calendar, glowColor: "from-blue-500/20 to-transparent" },
+  { key: "scope", label: "Scope Guardrail", icon: ShieldAlert, glowColor: "from-emerald-500/20 to-transparent" },
+  { key: "mission", label: "Mission Control", icon: Rocket, glowColor: "from-purple-500/20 to-transparent" },
+  { key: "pitch", label: "Pitch Commander", icon: Presentation, glowColor: "from-rose-500/20 to-transparent" },
+  { key: "readiness", label: "Submission Readiness", icon: Send, glowColor: "from-cyan-500/20 to-transparent" },
+  { key: "export", label: "Export Center", icon: TerminalIcon, glowColor: "from-slate-500/20 to-transparent" }
 ];
 
 export default function Home() {
   const [isLoading, setIsLoading] = useState(false);
   const [plan, setPlan] = useState<HackathonPlan | null>(null);
-  const [selectedIdeaIndex, setSelectedIdeaIndex] = useState(0);
-  const [activeTab, setActiveTab] = useState<TabKey>("ideas");
+  const [activeTab, setActiveTab] = useState<TabKey>("decoder");
   const [error, setError] = useState<string | null>(null);
   
   const dashboardRef = useRef<HTMLDivElement>(null);
 
-  const handleGenerate = async (problemStatement: string, apiKey: string) => {
+  const handleGenerate = async (problemStatement: string, apiKey: string, smartQuestions: any) => {
     setIsLoading(true);
     setError(null);
 
@@ -69,7 +73,7 @@ export default function Home() {
         headers: {
           "Content-Type": "application/json"
         },
-        body: JSON.stringify({ problemStatement, apiKey })
+        body: JSON.stringify({ problemStatement, apiKey, smartQuestions })
       });
 
       if (!response.ok) {
@@ -79,8 +83,7 @@ export default function Home() {
 
       const planData = (await response.json()) as HackathonPlan;
       setPlan(planData);
-      setSelectedIdeaIndex(0);
-      setActiveTab("ideas");
+      setActiveTab("decoder");
       
       // Scroll to dashboard after short delay for animations
       setTimeout(() => {
@@ -98,12 +101,9 @@ export default function Home() {
   const handleReset = () => {
     setPlan(null);
     setError(null);
-    setSelectedIdeaIndex(0);
-    setActiveTab("ideas");
+    setActiveTab("decoder");
     window.scrollTo({ top: 0, behavior: "smooth" });
   };
-
-  const selectedIdea = plan?.ideas[selectedIdeaIndex] || plan?.ideas[0];
 
   return (
     <div className="flex-1 w-full relative min-h-screen pb-24">
@@ -120,14 +120,14 @@ export default function Home() {
               <Sparkles className="w-4 h-4 text-white" />
             </div>
             <span className="font-extrabold text-sm tracking-widest text-slate-100 font-mono">
-              HACKPILOT AI
+              HACKPILOT OS
             </span>
           </div>
 
           <div className="flex items-center space-x-4">
             <div className="flex items-center space-x-1.5 bg-emerald-950/40 border border-emerald-800/30 px-3 py-1 rounded-full text-[10px] font-mono text-emerald-400">
               <span className="h-1.5 w-1.5 rounded-full bg-emerald-400 animate-pulse" />
-              <span>CO-PILOT ENGINE ONLINE</span>
+              <span>MISSION CONTROL ONLINE</span>
             </div>
             {plan && (
               <button
@@ -156,20 +156,20 @@ export default function Home() {
               {/* Top pill badge */}
               <div className="inline-flex items-center space-x-2 bg-indigo-950/40 border border-indigo-500/20 px-3 py-1 rounded-full text-xs text-indigo-300 font-mono shadow-inner shadow-indigo-500/10">
                 <Trophy className="w-3.5 h-3.5 text-indigo-400" />
-                <span>Next-Gen Hackathon Project Synthesizer</span>
+                <span>Hackathon Strategy Operating System</span>
               </div>
 
               {/* Title heading with text gradients */}
               <h1 className="text-4xl md:text-7xl font-extrabold leading-[1.08] text-white tracking-tight text-glow-indigo">
-                Build, ship, pitch,
+                Build what judges want.
                 <span className="block bg-gradient-to-r from-cyan-400 via-purple-400 to-indigo-500 bg-clip-text text-transparent mt-1 pb-1">
-                  and win hackathons.
+                  Avoid what they hate.
                 </span>
               </h1>
 
               {/* Description */}
               <p className="max-w-2xl mx-auto text-sm md:text-lg text-slate-400 leading-relaxed">
-                Paste your hackathon challenge statement. HackPilot AI instantly engineers optimal project proposals, robust tech stacks, detailed visual architectures, 36-hour Gantt timelines, priority matrices, presentation slide outline decks, and customized team splits.
+                HackPilot is your elite AI mentor, strict judge, and technical lead. We don't just generate generic ideas—we give you a highly opinionated, execution-ready blueprint to maximize your chances of winning.
               </p>
 
               {/* Problem Statement input box */}
@@ -204,20 +204,16 @@ export default function Home() {
                 <div className="absolute top-0 bottom-0 left-0 w-[4px] bg-gradient-to-b from-indigo-500 to-cyan-500" />
                 <div>
                   <span className="text-[10px] font-mono text-cyan-400 uppercase tracking-widest font-bold block">
-                    ACTIVE PROJECT WORKSPACE
+                    MISSION CONTROL WORKSPACE
                   </span>
                   <h1 className="text-xl md:text-3xl font-extrabold text-white mt-1">
-                    {selectedIdea?.name || "Workspace Dashboard"}
+                    {plan.recommendedWinner.ideaName}
                   </h1>
-                  <p className="text-xs text-slate-400 mt-1 italic">
-                    &ldquo;{selectedIdea?.tagline}&rdquo;
+                  <p className="text-xs text-slate-400 mt-1">
+                    Confidence Score: <span className="text-emerald-400 font-bold">{plan.recommendedWinner.confidence}%</span>
                   </p>
                 </div>
                 <div className="flex flex-wrap gap-2 items-center">
-                  <div className="bg-black/45 border border-white/5 px-3 py-1.5 rounded-lg text-xs flex items-center space-x-2">
-                    <span className="text-slate-500 font-mono">Difficulty:</span>
-                    <span className="font-bold text-slate-200 font-mono">{selectedIdea?.difficulty}</span>
-                  </div>
                   <button
                     type="button"
                     onClick={handleReset}
@@ -261,43 +257,50 @@ export default function Home() {
                     exit={{ opacity: 0, y: -15 }}
                     transition={{ duration: 0.35, ease: "easeOut" }}
                   >
-                    {activeTab === "ideas" && (
-                      <IdeasPanel
-                        ideas={plan.ideas}
-                        selectedIdeaIndex={selectedIdeaIndex}
-                        onSelectIdea={setSelectedIdeaIndex}
-                      />
+                    {activeTab === "decoder" && (
+                      <ProblemDecoderPanel intelligence={plan.challengeIntelligence} insights={plan.pastWinnerInsights} />
                     )}
 
-                    {activeTab === "stack" && (
-                      <TechStackPanel techStack={plan.techStack} />
+                    {activeTab === "winner" && (
+                      <WinnerRecommendationPanel winner={plan.recommendedWinner} probability={plan.winningProbability} />
                     )}
 
-                    {activeTab === "arch" && (
-                      <ArchitecturePanel architecture={plan.architecture} />
+                    {activeTab === "judge" && (
+                      <JudgeSimulatorPanel simulator={plan.judgeSimulator} />
                     )}
 
-                    {activeTab === "roadmap" && (
-                      <RoadmapPanel roadmap={plan.roadmap} />
+                    {activeTab === "sprint" && (
+                      <div className="space-y-8">
+                        <RoadmapPanel roadmap={plan.roadmap} />
+                        <TaskSplitterPanel teamSplit={plan.teamSplit} />
+                      </div>
                     )}
 
-                    {activeTab === "matrix" && (
-                      <MatrixPanel matrix={plan.matrix} />
+                    {activeTab === "scope" && (
+                      <ScopeGuardrailPanel guardrail={plan.scopeGuardrail} risk={plan.failureRisk} />
+                    )}
+
+                    {activeTab === "mission" && (
+                      <div className="space-y-8">
+                        <MatrixPanel matrix={plan.matrix} />
+                        <TechStackPanel techStack={plan.techStack} />
+                        <ArchitecturePanel architecture={plan.architecture} />
+                      </div>
                     )}
 
                     {activeTab === "pitch" && (
                       <PitchDeckPanel
                         pitchDeck={plan.pitchDeck}
-                        selectedIdeaName={selectedIdea?.name || "Winning Project"}
+                        selectedIdeaName={plan.recommendedWinner.ideaName}
                       />
                     )}
 
-                    {activeTab === "tasks" && (
-                      <TaskSplitterPanel teamSplit={plan.teamSplit} />
+                    {activeTab === "readiness" && (
+                      <SubmissionReadinessPanel readiness={plan.submissionReadiness} />
                     )}
 
                     {activeTab === "export" && (
-                      <ExportPanel plan={plan} selectedIdeaIndex={selectedIdeaIndex} />
+                      <ExportPanel plan={plan} selectedIdeaIndex={0} />
                     )}
                   </motion.div>
                 </AnimatePresence>
@@ -310,3 +313,4 @@ export default function Home() {
     </div>
   );
 }
+
